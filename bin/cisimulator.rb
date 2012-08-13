@@ -9,6 +9,10 @@ options.webhook_endpoint = nil
 options.build_status_options = {}
 
 optparse = OptionParser.new do |optparse|
+  optparse.on('-d', '--type <TYPE>', 'Type of payload to deliver, one of (travis|jenkins)') do |type|
+    options.type = type
+  end
+
   optparse.on('-e', '--endpoint <URL>', 'Webhook endpoint (URL)') do |url|
     options.webhook_endpoint = url
   end
@@ -35,4 +39,4 @@ if options.webhook_endpoint.nil?
   exit
 end
 
-WebhookPoster.post options.webhook_endpoint, options.build_status_options
+WebhookPoster.post options.type, options.webhook_endpoint, options.build_status_options
