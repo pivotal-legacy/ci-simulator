@@ -2,91 +2,86 @@ require 'spec_helper'
 
 describe WebhookPoster do
 
+  shared_examples_for 'a webhook poster' do
+    it 'passes the hostname and port to HTTP.start' do
+      Net::HTTP.should_receive(:start).with('localhost', 3000)
+      subject
+    end
+
+    it 'should save the build status payload as the request body' do
+      payload = double(:payload)
+      build_status_class.stub(:create).and_return(payload)
+
+      request = double(:request)
+      Net::HTTP::Post.stub(:new).and_return(request)
+      request.should_receive(:body=).with(payload)
+      subject
+    end
+
+    it 'should post the request' do
+      http = double(:http)
+      http.should_receive(:request)
+      Net::HTTP.stub(:start).and_yield(http)
+      subject
+    end
+  end
+
   describe '.post' do
 
+    let(:request) { double(:request) }
+
     before do
-      Net::HTTP.stub(:post_form)
+      request.stub(:body=)
+      Net::HTTP::Post.stub(:new).and_return(request)
+      Net::HTTP.stub(:start)
     end
+
+    let(:url) { 'http://localhost:3000/projects/65a13435-9c40-4c60-b661-c35a17849f8e/status' }
+    subject { WebhookPoster.post(type, url) }
 
     context 'with a Travis project' do
       let(:type) { :travis }
-      let(:url) { 'http://localhost:3000/projects/65a13435-9c40-4c60-b661-c35a17849f8e/status' }
-      let(:expected_payload) do
-        {payload: "{\"id\":1885641,\"number\":\"75\",\"status\":1,\"result\":0,\"status_message\":\"Broken\",\"result_message\":\"Broken\",\"started_at\":\"2012-07-17T14:16:37Z\",\"finished_at\":\"2012-07-17T14:18:52Z\",\"duration\":135,\"build_url\":\"http://www.google.com\",\"commit\":\"5bbadf792613cb64cfc67e15ae620ea3cb56b81d\",\"branch\":\"webhooks\",\"message\":\"Foo\",\"compare_url\":\"http://www.google.com\",\"committed_at\":\"2012-07-17T14:16:18Z\",\"author_name\":\"Foo Bar and Baz\",\"author_email\":\"foobar@baz.com\",\"committer_name\":\"Foo Bar and Baz\",\"committer_email\":\"foobar@baz.com\"}"}
-      end
-      subject { WebhookPoster.post(type, url) }
+      let(:build_status_class) { TravisBuildStatus }
 
-      it 'should perform a post request on the specified url and supply the json' do
-        Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
+      it_should_behave_like 'a webhook poster'
+
+      it 'should create a travis payload' do
+        TravisBuildStatus.should_receive(:create)
         subject
-      end
-
-      context 'with a specified status' do
-        let(:expected_payload) do
-          {payload: "{\"id\":1885641,\"number\":\"75\",\"status\":1,\"result\":1,\"status_message\":\"Broken\",\"result_message\":\"Broken\",\"started_at\":\"2012-07-17T14:16:37Z\",\"finished_at\":\"2012-07-17T14:18:52Z\",\"duration\":135,\"build_url\":\"http://www.google.com\",\"commit\":\"5bbadf792613cb64cfc67e15ae620ea3cb56b81d\",\"branch\":\"webhooks\",\"message\":\"Foo\",\"compare_url\":\"http://www.google.com\",\"committed_at\":\"2012-07-17T14:16:18Z\",\"author_name\":\"Foo Bar and Baz\",\"author_email\":\"foobar@baz.com\",\"committer_name\":\"Foo Bar and Baz\",\"committer_email\":\"foobar@baz.com\"}"}
-        end
-        let(:status) { :success }
-        subject { WebhookPoster.post(type, url, status: :failure) }
-
-        it 'should supply the specified status in the json payload' do
-          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
-          subject
-        end
-      end
-
-      context 'with a specified build id' do
-        let(:id) { 1 }
-        let(:expected_payload) do
-          {payload: "{\"id\":#{id},\"number\":\"75\",\"status\":1,\"result\":0,\"status_message\":\"Broken\",\"result_message\":\"Broken\",\"started_at\":\"2012-07-17T14:16:37Z\",\"finished_at\":\"2012-07-17T14:18:52Z\",\"duration\":135,\"build_url\":\"http://www.google.com\",\"commit\":\"5bbadf792613cb64cfc67e15ae620ea3cb56b81d\",\"branch\":\"webhooks\",\"message\":\"Foo\",\"compare_url\":\"http://www.google.com\",\"committed_at\":\"2012-07-17T14:16:18Z\",\"author_name\":\"Foo Bar and Baz\",\"author_email\":\"foobar@baz.com\",\"committer_name\":\"Foo Bar and Baz\",\"committer_email\":\"foobar@baz.com\"}"}
-        end
-        subject { WebhookPoster.post(type, url, id: id) }
-
-        it 'should supply the specified status in the json payload' do
-          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
-          subject
-        end
-
       end
     end
 
     context 'with a Jenkins project' do
       let(:type) { :jenkins }
-      let(:url) { 'http://localhost:3000/projects/c1fbbfc1-6fc3-4c61-8840-9be43bcefed9/status' }
-      let(:expected_payload) do
-        {"{\"build\":{\"number\":1,\"phase\":\"SUCCESS\"}}" => nil}
-      end
-      subject { WebhookPoster.post(type, url) }
+      let(:build_status_class) { JenkinsBuildStatus }
 
-      it 'should perform a post request on the specified url and supply the xml' do
-        Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
+      it_should_behave_like 'a webhook poster'
+
+      it 'should create a jenkins payload' do
+        build_status_class.should_receive(:create)
         subject
       end
+    end
 
-      context 'with a specified status' do
-        let(:expected_payload) do
-          {"{\"build\":{\"number\":1,\"phase\":\"FAILURE\"}}" => nil}
-        end
-        let(:status) { :success }
-        subject { WebhookPoster.post(type, url, status: :failure) }
+    context 'with a TeamCity project' do
+      let(:type) { :teamcity }
+      let(:build_status_class) { TeamCityBuildStatus }
 
-        it 'should supply the specified status in the json payload' do
-          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
-          subject
-        end
+      it_should_behave_like 'a webhook poster'
+
+      it 'should create a team city payload' do
+        build_status_class.should_receive(:create)
+        subject
       end
+    end
 
-      context 'with a specified build id' do
-        let(:id) { 666 }
-        let(:expected_payload) do
-          {"{\"build\":{\"number\":666,\"phase\":\"SUCCESS\"}}" => nil}
-        end
-        subject { WebhookPoster.post(type, url, id: id) }
+    context 'with an unknown project' do
+      let(:type) { :wibble }
 
-        it 'should supply the specified status in the json payload' do
-          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
+      it 'should create a team city payload' do
+        expect do
           subject
-        end
-
+        end.to raise_error(ArgumentError)
       end
     end
   end

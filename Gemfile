@@ -1,5 +1,7 @@
 source :rubygems
 
+gem "activesupport"
+
 group :development do
   gem "rake"
 end

@@ -4,7 +4,7 @@ class TravisBuildStatus
 
   def self.create options = {}
     options = {
-      id: 1885641,
+      id: 1,
       status: :success
     }.merge(options)
 
@@ -29,7 +29,7 @@ class TravisBuildStatus
         committer_name: 'Foo Bar and Baz',
         committer_email: 'foobar@baz.com'
       }.to_json
-    }
+    }.to_query
   end
 
   def self.convert_status status

@@ -7,14 +7,14 @@ class JenkinsBuildStatus
     }.merge(options)
 
     {
-      {
-        build: {
-           number: options[:id],
-           phase: convert_status(options[:status]),
-        }
-      }.to_json => nil
-    }
+      build: {
+         number: options[:id],
+         phase: convert_status(options[:status]),
+      }
+    }.to_json
   end
+
+private
 
   def self.convert_status status
     case status.to_s
