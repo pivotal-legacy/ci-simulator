@@ -61,6 +61,33 @@ describe WebhookPoster do
         Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
         subject
       end
+
+      context 'with a specified status' do
+        let(:expected_payload) do
+          {"{\"build\":{\"number\":1,\"phase\":\"FAILURE\"}}" => nil}
+        end
+        let(:status) { :success }
+        subject { WebhookPoster.post(type, url, status: :failure) }
+
+        it 'should supply the specified status in the json payload' do
+          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
+          subject
+        end
+      end
+
+      context 'with a specified build id' do
+        let(:id) { 666 }
+        let(:expected_payload) do
+          {"{\"build\":{\"number\":666,\"phase\":\"SUCCESS\"}}" => nil}
+        end
+        subject { WebhookPoster.post(type, url, id: id) }
+
+        it 'should supply the specified status in the json payload' do
+          Net::HTTP.should_receive(:post_form).with(URI(url), expected_payload)
+          subject
+        end
+
+      end
     end
   end
 

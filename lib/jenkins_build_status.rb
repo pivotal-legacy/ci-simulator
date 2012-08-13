@@ -2,18 +2,27 @@ class JenkinsBuildStatus
 
   def self.create options = {}
     options = {
-      id: 1885641,
+      id: 1,
       status: :success
     }.merge(options)
 
     {
       {
         build: {
-           number: 1,
-           phase: 'SUCCESS',
+           number: options[:id],
+           phase: convert_status(options[:status]),
         }
       }.to_json => nil
     }
+  end
+
+  def self.convert_status status
+    case status.to_s
+    when 'success', '0'
+      'SUCCESS'
+    else
+      'FAILURE'
+    end
   end
 
 end
