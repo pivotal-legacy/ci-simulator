@@ -6,7 +6,7 @@ require File.join(File.expand_path(File.dirname(__FILE__)), '../lib/webhook_post
 
 options = OpenStruct.new
 options.webhook_endpoint = nil
-options.build_status = :success
+options.build_status_options = {}
 
 optparse = OptionParser.new do |optparse|
   optparse.on('-e', '--endpoint <URL>', 'Webhook endpoint (URL)') do |url|
@@ -14,7 +14,11 @@ optparse = OptionParser.new do |optparse|
   end
 
   optparse.on('-s', '--status <STATUS>', 'Status for build, one of (failure|success)') do |status|
-    options.build_status = status
+    options.build_status_options[:status] = status
+  end
+
+  optparse.on('-i', '--id <ID>', 'Build status id') do |id|
+    options.build_status_options[:id] = id
   end
 
   optparse.on_tail('-h', '--help', 'Show this message') do
@@ -31,4 +35,4 @@ if options.webhook_endpoint.nil?
   exit
 end
 
-WebhookPoster.post options.webhook_endpoint, status: options.build_status
+WebhookPoster.post options.webhook_endpoint, options.build_status_options

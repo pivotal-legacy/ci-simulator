@@ -4,10 +4,11 @@ class TravisBuildStatus
 
   def self.create options = {}
     options = {
+      id: 1885641,
       status: :success
     }.merge(options)
 
-    { id: 1885641,
+    { id: options[:id],
       number: '75',
       status: 1,
       result: convert_status(options[:status]),
