@@ -10,7 +10,7 @@ options.build_status_options = {}
 
 optparse = OptionParser.new do |optparse|
   optparse.on('-d', '--type <TYPE>', 'Type of payload to deliver, one of (travis|jenkins)') do |type|
-    options.type = type
+    options.type = type.to_sym
   end
 
   optparse.on('-e', '--endpoint <URL>', 'Webhook endpoint (URL)') do |url|
@@ -18,7 +18,12 @@ optparse = OptionParser.new do |optparse|
   end
 
   optparse.on('-s', '--status <STATUS>', 'Status for build, one of (failure|success)') do |status|
-    options.build_status_options[:status] = status
+    options.build_status_options[:status] = case status
+      when /success/i, '1', /true/i
+        :success
+      else
+        :failure
+      end
   end
 
   optparse.on('-i', '--id <ID>', 'Build status id') do |id|

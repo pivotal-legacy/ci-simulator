@@ -19,10 +19,10 @@ class WebhookPoster
 private
 
   def self.build_status type
-    case type.to_s
-    when 'travis' then TravisBuildStatus
-    when 'jenkins' then JenkinsBuildStatus
-    when 'teamcity' then TeamCityBuildStatus
+    case type
+    when :travis then TravisBuildStatus
+    when :jenkins then JenkinsBuildStatus
+    when :teamcity then TeamCityBuildStatus
     else
       raise ArgumentError.new "Unknown build status type #{type}"
     end

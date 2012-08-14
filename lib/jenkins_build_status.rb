@@ -17,8 +17,7 @@ class JenkinsBuildStatus
 private
 
   def self.convert_status status
-    case status.to_s
-    when 'success', '0'
+    if status == :success
       'SUCCESS'
     else
       'FAILURE'
