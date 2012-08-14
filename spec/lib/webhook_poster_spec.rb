@@ -36,8 +36,20 @@ describe WebhookPoster do
       Net::HTTP.stub(:start)
     end
 
+
     let(:url) { 'http://localhost:3000/projects/65a13435-9c40-4c60-b661-c35a17849f8e/status' }
     subject { WebhookPoster.post(type, url) }
+
+    context 'with a url that has no path' do
+      let(:url) { 'http://localhost:3000' }
+
+      subject { WebhookPoster.post(:travis, url) }
+
+      it 'should post with the root path' do
+        Net::HTTP::Post.should_receive(:new).with('/')
+        subject
+      end
+    end
 
     context 'with a Travis project' do
       let(:type) { :travis }

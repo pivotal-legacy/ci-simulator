@@ -1,6 +1,8 @@
 source :rubygems
 
 gem "activesupport"
+gem "sinatra"
+gem "haml"
 
 group :development do
   gem "rake"

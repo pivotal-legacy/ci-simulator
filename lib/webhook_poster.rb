@@ -1,4 +1,6 @@
+require 'active_support/core_ext/object/blank'
 require 'net/http'
+
 require File.join(File.dirname(__FILE__), 'travis_build_status.rb')
 require File.join(File.dirname(__FILE__), 'jenkins_build_status.rb')
 require File.join(File.dirname(__FILE__), 'team_city_build_status.rb')
@@ -8,7 +10,7 @@ class WebhookPoster
   def self.post type, url, options = {}
     uri = URI(url)
 
-    req = Net::HTTP::Post.new(uri.path)
+    req = Net::HTTP::Post.new(uri.path.presence || '/')
     req.body = build_status(type).create(options)
 
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
