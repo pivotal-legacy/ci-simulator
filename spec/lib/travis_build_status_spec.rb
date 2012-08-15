@@ -5,30 +5,25 @@ describe TravisBuildStatus do
   describe '.create' do
 
     let(:expected_payload) do
-      {payload: %[{"id":1,"number":"75","status":1,"result":0,"status_message":"Broken","result_message":"Broken","started_at":"2012-07-17T14:16:37Z","finished_at":"2012-07-17T14:18:52Z","duration":135,"build_url":"http://www.google.com","commit":"5bbadf792613cb64cfc67e15ae620ea3cb56b81d","branch":"webhooks","message":"Foo","compare_url":"http://www.google.com","committed_at":"2012-07-17T14:16:18Z","author_name":"Foo Bar and Baz","author_email":"foobar@baz.com","committer_name":"Foo Bar and Baz","committer_email":"foobar@baz.com"}] }.to_query
+      'payload=%7B%22id%22%3A1%2C%22number%22%3A%2275%22%2C%22status%22%3A1%2C%22result%22%3A0%2C%22status_message%22%3A%22Broken%22%2C%22result_message%22%3A%22Broken%22%2C%22started_at%22%3A%222012-07-17T14%3A16%3A37Z%22%2C%22finished_at%22%3A%222012-07-17T14%3A18%3A52Z%22%2C%22duration%22%3A135%2C%22build_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22commit%22%3A%225bbadf792613cb64cfc67e15ae620ea3cb56b81d%22%2C%22branch%22%3A%22webhooks%22%2C%22message%22%3A%22Foo%22%2C%22compare_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22committed_at%22%3A%222012-07-17T14%3A16%3A18Z%22%2C%22author_name%22%3A%22Foo+Bar+and+Baz%22%2C%22author_email%22%3A%22foobar%40baz.com%22%2C%22committer_name%22%3A%22Foo+Bar+and+Baz%22%2C%22committer_email%22%3A%22foobar%40baz.com%22%7D'
     end
-    subject { TravisBuildStatus.create }
 
-    it { should == expected_payload }
+    it { TravisBuildStatus.create.should == expected_payload }
 
     context 'with a specified status' do
       let(:expected_payload) do
-        {payload: %[{"id":1,"number":"75","status":1,"result":1,"status_message":"Broken","result_message":"Broken","started_at":"2012-07-17T14:16:37Z","finished_at":"2012-07-17T14:18:52Z","duration":135,"build_url":"http://www.google.com","commit":"5bbadf792613cb64cfc67e15ae620ea3cb56b81d","branch":"webhooks","message":"Foo","compare_url":"http://www.google.com","committed_at":"2012-07-17T14:16:18Z","author_name":"Foo Bar and Baz","author_email":"foobar@baz.com","committer_name":"Foo Bar and Baz","committer_email":"foobar@baz.com"}] }.to_query
+        'payload=%7B%22id%22%3A1%2C%22number%22%3A%2275%22%2C%22status%22%3A1%2C%22result%22%3A1%2C%22status_message%22%3A%22Broken%22%2C%22result_message%22%3A%22Broken%22%2C%22started_at%22%3A%222012-07-17T14%3A16%3A37Z%22%2C%22finished_at%22%3A%222012-07-17T14%3A18%3A52Z%22%2C%22duration%22%3A135%2C%22build_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22commit%22%3A%225bbadf792613cb64cfc67e15ae620ea3cb56b81d%22%2C%22branch%22%3A%22webhooks%22%2C%22message%22%3A%22Foo%22%2C%22compare_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22committed_at%22%3A%222012-07-17T14%3A16%3A18Z%22%2C%22author_name%22%3A%22Foo+Bar+and+Baz%22%2C%22author_email%22%3A%22foobar%40baz.com%22%2C%22committer_name%22%3A%22Foo+Bar+and+Baz%22%2C%22committer_email%22%3A%22foobar%40baz.com%22%7D'
       end
-      let(:status) { :failure }
-      subject { TravisBuildStatus.create status: status}
 
-      it { should == expected_payload }
+      it { TravisBuildStatus.create(status: :failure).should == expected_payload }
     end
 
     context 'with a specified build id' do
-      let(:id) { 666 }
       let(:expected_payload) do
-        {payload: %[{"id":#{id},"number":"75","status":1,"result":0,"status_message":"Broken","result_message":"Broken","started_at":"2012-07-17T14:16:37Z","finished_at":"2012-07-17T14:18:52Z","duration":135,"build_url":"http://www.google.com","commit":"5bbadf792613cb64cfc67e15ae620ea3cb56b81d","branch":"webhooks","message":"Foo","compare_url":"http://www.google.com","committed_at":"2012-07-17T14:16:18Z","author_name":"Foo Bar and Baz","author_email":"foobar@baz.com","committer_name":"Foo Bar and Baz","committer_email":"foobar@baz.com"}] }.to_query
+        'payload=%7B%22id%22%3A666%2C%22number%22%3A%2275%22%2C%22status%22%3A1%2C%22result%22%3A0%2C%22status_message%22%3A%22Broken%22%2C%22result_message%22%3A%22Broken%22%2C%22started_at%22%3A%222012-07-17T14%3A16%3A37Z%22%2C%22finished_at%22%3A%222012-07-17T14%3A18%3A52Z%22%2C%22duration%22%3A135%2C%22build_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22commit%22%3A%225bbadf792613cb64cfc67e15ae620ea3cb56b81d%22%2C%22branch%22%3A%22webhooks%22%2C%22message%22%3A%22Foo%22%2C%22compare_url%22%3A%22http%3A%2F%2Fwww.google.com%22%2C%22committed_at%22%3A%222012-07-17T14%3A16%3A18Z%22%2C%22author_name%22%3A%22Foo+Bar+and+Baz%22%2C%22author_email%22%3A%22foobar%40baz.com%22%2C%22committer_name%22%3A%22Foo+Bar+and+Baz%22%2C%22committer_email%22%3A%22foobar%40baz.com%22%7D'
       end
-      subject { TravisBuildStatus.create id: id}
 
-      it { should == expected_payload }
+      it { TravisBuildStatus.create(id: 666).should == expected_payload }
     end
   end
 end

@@ -4,6 +4,7 @@ require 'net/http'
 require File.join(File.dirname(__FILE__), 'travis_build_status.rb')
 require File.join(File.dirname(__FILE__), 'jenkins_build_status.rb')
 require File.join(File.dirname(__FILE__), 'team_city_build_status.rb')
+require File.join(File.dirname(__FILE__), 'semaphore_build_status.rb')
 
 class WebhookPoster
 
@@ -25,6 +26,7 @@ private
     when :travis then TravisBuildStatus
     when :jenkins then JenkinsBuildStatus
     when :teamcity then TeamCityBuildStatus
+    when :semaphore then SemaphoreBuildStatus
     else
       raise ArgumentError.new "Unknown build status type #{type}"
     end

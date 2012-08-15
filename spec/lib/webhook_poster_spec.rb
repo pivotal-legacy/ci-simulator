@@ -24,6 +24,11 @@ describe WebhookPoster do
       Net::HTTP.stub(:start).and_yield(http)
       subject
     end
+
+    it 'should create the appropriate payload' do
+      build_status_class.should_receive(:create)
+      subject
+    end
   end
 
   describe '.post' do
@@ -56,11 +61,6 @@ describe WebhookPoster do
       let(:build_status_class) { TravisBuildStatus }
 
       it_should_behave_like 'a webhook poster'
-
-      it 'should create a travis payload' do
-        TravisBuildStatus.should_receive(:create)
-        subject
-      end
     end
 
     context 'with a Jenkins project' do
@@ -68,11 +68,6 @@ describe WebhookPoster do
       let(:build_status_class) { JenkinsBuildStatus }
 
       it_should_behave_like 'a webhook poster'
-
-      it 'should create a jenkins payload' do
-        build_status_class.should_receive(:create)
-        subject
-      end
     end
 
     context 'with a TeamCity project' do
@@ -80,11 +75,13 @@ describe WebhookPoster do
       let(:build_status_class) { TeamCityBuildStatus }
 
       it_should_behave_like 'a webhook poster'
+    end
 
-      it 'should create a team city payload' do
-        build_status_class.should_receive(:create)
-        subject
-      end
+    context 'with a Semaphore project' do
+      let(:type) { :semaphore }
+      let(:build_status_class) { SemaphoreBuildStatus }
+
+      it_should_behave_like 'a webhook poster'
     end
 
     context 'with an unknown project' do

@@ -9,7 +9,7 @@ options.webhook_endpoint = nil
 options.build_status_options = {}
 
 optparse = OptionParser.new do |optparse|
-  optparse.on('-d', '--type <TYPE>', 'Type of payload to deliver, one of (travis|jenkins)') do |type|
+  optparse.on('-d', '--type <TYPE>', 'Type of payload to deliver, one of (travis|jenkins|teamcity|semaphore)') do |type|
     options.type = type.to_sym
   end
 
