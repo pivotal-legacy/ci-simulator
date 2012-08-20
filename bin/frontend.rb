@@ -84,6 +84,7 @@ __END__
             %option{value: 'travis', selected: (type == 'travis')} Travis
             %option{value: 'jenkins', selected: (type == 'jenkins')} Jenkins
             %option{value: 'teamcity', selected: (type == 'teamcity')} TeamCity
+            %option{value: 'semaphore', selected: (type == 'semaphore')} Semaphore
         %div
           .label Build status
           %select{name: 'status'}
