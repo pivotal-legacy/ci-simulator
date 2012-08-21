@@ -8,7 +8,7 @@ class TeamCityBuildStatus
       status: :success
     }.merge(options)
 
-    { buildStatus: 'Running',
+    {build:{ buildStatus: 'Running',
       buildResult: convert_status(options[:status]),
       notifyType: 'buildFinished',
       buildRunner: 'Command Line',
@@ -25,7 +25,7 @@ class TeamCityBuildStatus
       triggeredBy: 'ci',
       message: "Build projectmonitor_ci_test_teamcity :: projectmonitor_ci_test_teamcity has finished.  This is build number 13, has a status of 'Running' and was triggered by ci",
       text: 'projectmonitor_ci_test_teamcity :: projectmonitor_ci_test_teamcity has finished. Status: Running'
-    }.to_query('build')
+    }}.to_json
   end
 
 private
