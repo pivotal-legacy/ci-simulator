@@ -9,7 +9,8 @@ class JenkinsBuildStatus
     {
       build: {
          number: options[:id],
-         phase: convert_status(options[:status]),
+         status: convert_status(options[:status]),
+         url: 'foo'
       }
     }.to_json
   end
