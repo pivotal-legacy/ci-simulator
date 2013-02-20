@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem "activesupport"
 gem "sinatra"
@@ -10,6 +10,5 @@ end
 
 group :test, :development do
   gem "rspec"
-  gem "debugger"
   gem "pry"
 end

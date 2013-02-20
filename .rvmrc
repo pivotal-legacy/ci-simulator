@@ -1,1 +1,1 @@
-rvm --create use ruby-1.9.3-p194@cisimulator
+rvm --create use ruby-1.9.3-p385@cisimulator
